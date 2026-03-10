@@ -4,6 +4,9 @@ import React, { useState, useEffect, useActionState, useRef } from 'react'
 import { login, signup, signInWithOAuth } from './actions'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { type Provider } from '@supabase/supabase-js'
+import LogoIcon from '@/components/LogoIcon'
+import ThemeToggle from '@/components/ThemeToggle'
+import Link from 'next/link'
 
 export default function AuthPage() {
   const searchParams = useSearchParams()
@@ -39,20 +42,6 @@ export default function AuthPage() {
     null
   )
 
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
-
-  // Theme initialization
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark')
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
-
   // Sync isLogin with URL mode parameter
   useEffect(() => {
     const mode = searchParams.get('mode')
@@ -76,13 +65,6 @@ export default function AuthPage() {
     }
   }, [state])
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-  }
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -90,6 +72,7 @@ export default function AuthPage() {
 
   const switchMode = (toLogin: boolean) => {
     setIsLogin(toLogin)
+    setFormData({ email: '', password: '', nickname: '' })
     const params = new URLSearchParams(searchParams.toString())
     if (toLogin) params.delete('mode')
     else params.set('mode', 'signup')
@@ -143,12 +126,12 @@ export default function AuthPage() {
           backgroundImage: 'radial-gradient(at 0% 0%, hsla(85, 20%, 60%, 1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(125, 17%, 38%, 1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(45, 30%, 80%, 1) 0, transparent 50%)'
         }}>
         <div className="relative z-10 max-w-lg text-white">
-          <div className="mb-8 flex items-center gap-3">
-            <div className="p-2 backdrop-blur-md bg-white/10 rounded-lg">
-              <span className="material-symbols-outlined text-4xl">cloud_queue</span>
+          <Link href="/" className="mb-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <div className="flex items-center justify-center size-12 backdrop-blur-md bg-black/20 rounded-xl">
+              <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
             </div>
             <h1 className="text-4xl font-black tracking-tight">Cloud Memo</h1>
-          </div>
+          </Link>
           <h2 className="text-5xl font-bold leading-tight mb-6">클라우드 메모에 당신의<br /> 생각을 담으세요.</h2>
           <p className="text-lg text-white/80 font-medium leading-relaxed">일상을 정리하고 모든 기기에서 동기화하며, 소중한 아이디어를 절대 놓치지 마세요. 매일 영감을 얻기 위해 Cloud Memo를 신뢰하는 수만 명의 사용자와 함께하세요.</p>
 
@@ -174,22 +157,14 @@ export default function AuthPage() {
       {/* Right Side: Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-24 dark:bg-[#1A1C19] bg-[#fcfcf2] relative">
         {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          type="button"
-          className="absolute top-8 right-8 w-12 h-12 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-300 hover:text-[#4F6F52] dark:hover:text-[#a0bba2] hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm hover:shadow-md active:scale-95 z-50"
-          aria-label="Toggle Theme"
-        >
-          <span className="material-symbols-outlined text-[26px] leading-none">
-            {theme === 'light' ? 'dark_mode' : 'light_mode'}
-          </span>
-        </button>
+        <ThemeToggle variant="auth" className="absolute top-8 right-8" />
 
         <div className="w-full max-w-md">
           {/* Logo for mobile */}
-          <div className="lg:hidden mb-10 flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#4F6F52] text-3xl">cloud_queue</span>
-            <span className="text-2xl font-black">Cloud Memo</span>
+          <div className="lg:hidden mb-10 flex items-center">
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <LogoIcon iconSize="text-2xl" containerClass="size-10 rounded-xl" />
+            </Link>
           </div>
 
           <div className="mb-10">
