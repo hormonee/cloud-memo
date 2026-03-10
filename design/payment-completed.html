@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F6F52",
+                        "background-light": "#fcfcf2",
+                        "background-dark": "#1a1c1a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>결제 완료 - Cloud Memo</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 py-4 md:px-40 bg-white/50 backdrop-blur-sm">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">cloud</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Cloud Memo</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+<div class="max-w-[520px] w-full bg-white dark:bg-slate-900 rounded-xl shadow-xl shadow-primary/5 p-8 border border-primary/5">
+<div class="flex flex-col items-center text-center mb-8">
+<div class="w-16 h-16 dark:bg-green-900/30 dark:text-green-400 rounded-full flex items-center justify-center mb-4 bg-primary/20">
+<span class="material-symbols-outlined text-4xl">check_circle</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-3xl font-bold leading-tight mb-2">결제가 완료되었습니다!</h1>
+<p class="text-slate-600 dark:text-slate-400 text-base">이제 Cloud Memo의 모든 기능을 즐겨보세요.</p>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 mb-6 border border-primary/5">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-lg bg-primary/20 flex items-center justify-center" data-alt="Abstract purple geometric pattern for plan icon">
+<span class="material-symbols-outlined text-primary text-3xl">star</span>
+</div>
+<div>
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-bold">Premium Plan</h3>
+<p class="text-primary font-medium text-sm">월간 구독 이용 중</p>
+</div>
+</div>
+<div class="space-y-3 border-t border-primary/10 pt-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">결제 금액</span>
+<span class="text-slate-900 dark:text-slate-100 font-semibold">₩9,900 / 월</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">결제 번호</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">TRX-940284</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">결제 일시</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">2023.10.27 14:30:05</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">다음 결제일</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">2023.11.27</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center justify-center gap-2">
+<span>대시보드로 이동</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="w-full bg-transparent hover:bg-primary/5 text-slate-600 dark:text-slate-400 font-medium py-3 px-6 rounded-lg transition-all text-sm">
+                            영수증 보기
+                        </button>
+</div>
+</div>
+<div class="mt-8 text-center">
+<p class="text-slate-500 dark:text-slate-400 text-sm">
+                        결제 관련 문의가 있으신가요? <a class="text-primary hover:underline" href="#">고객 센터</a>로 연락주세요.
+                    </p>
+</div>
+</main>
+<footer class="px-6 py-8 md:px-40 text-center border-t border-primary/5">
+<p class="text-slate-400 dark:text-slate-600 text-xs">© 2023 Cloud Memo Inc. All rights reserved.</p>
+</footer>
+</div>
+</div>
+</body></html>

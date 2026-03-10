@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cloud Memo - Login &amp; Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwing.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4F6F52",
+                        "background-light": "#fcfcf2",
+                        "background-dark": "#1A1C19",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }</script>
+<style>body {
+            font-family: 'Inter', sans-serif;
+        }
+        .bg-mesh {
+            background-color: #4F6F52;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(85, 20%, 60%, 1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(125, 17%, 38%, 1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(45, 30%, 80%, 1) 0, transparent 50%);
+        }</style>
+</head>
+<body class="dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased overflow-hidden bg-[#fcfcf2]">
+<div class="flex min-h-screen w-full">
+<!-- Left Side: Visual/Illustration -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-mesh items-center justify-center p-12 overflow-hidden" data-alt="Abstract purple and violet gradient mesh pattern">
+<div class="relative z-10 max-w-lg text-white">
+<div class="mb-8 flex items-center gap-3">
+<div class="p-2 backdrop-blur-md rounded-lg">
+<span class="material-symbols-outlined text-4xl" style="">cloud_queue</span>
+</div>
+<h1 class="text-4xl font-black tracking-tight" style="">Cloud Memo</h1>
+</div>
+<h2 class="text-5xl font-bold leading-tight mb-6" style="">클라우드 메모에 당신의 생각을 담으세요.</h2>
+<p class="text-lg text-white/80 font-medium leading-relaxed" style="">일상을 정리하고 모든 기기에서 동기화하며, 소중한 아이디어를 절대 놓치지 마세요. 매일 영감을 얻기 위해 Cloud Memo를 신뢰하는 수만 명의 사용자와 함께하세요.</p>
+<div class="mt-12 flex gap-4">
+<div class="flex -space-x-3">
+<img class="h-10 w-10 rounded-full border-2 object-cover" data-alt="Portrait of a female user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt-uS73bQALMkeSewzyyKvBFB30eZxDeAujXwdoU3NcHv2Xj6bfsQ4xghttnQOUsmCH7FkrvmAwwFLz4lDaEefENQuYjaDzULMitF2zaYjUwTC9sjgsPPQLN4Kq3LXNDyopMrTzT8VeKdifprEgmecsa4J0kMG37jV8kFjhFe1Jhk9fwCZHZDgV25W6cKOHkbcWEoqSFtowQ9ae3ePaj9cE6-kq0gKmehHs0_wW4sK8k-EyhRpQ1PihEmCnKa6vC-XLChA2PW87R2f" style="border-color: #4F6F52;"/>
+<img class="h-10 w-10 rounded-full border-2 object-cover" data-alt="Portrait of a male user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGuZ4h7ZbAUa81cBZ6OJs-vdX7POpgGnHZuGYC362QF3sihX1VXj5IAc2a59rzJyPBTuuXoz-OT_ad8gP9Ae0Mo-r6VommkUqF1qbAdzlcmo5lVkAkgSw6ENGpeJNJ4njKjQZB4Y8SNY-0WnNerQjdVO4bKhoQj6TMKUgpZ2vlCYNFR0C-hWBd9SC9bcWo_JdoWRJcKXSCWTP93B_sW6GHCQ9MBCGXhQOFmjt3ddn2r8xVC2GBcpfa2_ZnA3hGAwWwqgr8LHzZ4pdc" style="border-color: #4F6F52;"/>
+<img class="h-10 w-10 rounded-full border-2 object-cover" data-alt="Portrait of a female student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ96GZndNkwTz61L0OZxXP-983Hk3lAh7Sq2DKTHJ4howQ0zZBGuv5igY-7x72_0Znd15vPzCzmHbzlmvlC29h9dMuxS86LyWkc3WBWKHuo-fYWvFrojFXc38S4oEdzPl7UDlz82xGRLzVaUDfUVurhfSWbfBSWKZNelc_pWN2ewhjTYYnIQVEx7LV2ibZQFUappmzkOAJ3whjABwbz4dpt9CD-1uyCAG30cb7UzK66HuR-sNkSUVj2Wxg7N5O7oJswwVvQaYXmB4D" style="border-color: #4F6F52;"/>
+</div>
+<div class="text-sm font-medium self-center">
+<span class="block" style="">1만 명 이상의 사용자가 신뢰함</span>
+</div>
+</div>
+</div>
+<!-- Decorative elements -->
+<div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute top-[10%] left-[-5%] w-64 h-64 bg-primary/30 rounded-full blur-3xl"></div>
+</div>
+<!-- Right Side: Auth Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-24 dark:bg-background-dark bg-[#fcfcf2]">
+<div class="w-full max-w-md">
+<div class="lg:hidden mb-10 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl" style="">cloud_queue</span>
+<span class="text-2xl font-black text-slate-900 dark:text-slate-100" style="">Cloud Memo</span>
+</div>
+<div class="mb-10">
+<h2 class="text-3xl font-black text-slate-900 dark:text-slate-100" style="">다시 오신 것을 환영합니다</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-2" style="">노트에 접속하기 위해 상세 정보를 입력해주세요.</p>
+</div>
+<form class="space-y-5">
+<div>
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2" for="email" style="">이메일 주소</label>
+<input class="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400" id="email" placeholder="name@company.com" type="email"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300" for="password" style="">비밀번호</label>
+<a class="text-xs font-bold text-primary hover:underline" href="#" style="">비밀번호를 잊으셨나요?</a>
+</div>
+<div class="relative">
+<input class="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary" style="" type="button">
+<span class="material-symbols-outlined text-xl" style="">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex items-center">
+<input class="w-4 h-4 rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900" id="remember" type="checkbox"/>
+<label class="ml-2 text-sm text-slate-600 dark:text-slate-400" for="remember" style="">30일 동안 로그인 유지</label>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary/25 transition-all active:scale-[0.98] hover:bg-[#3e5841]" style="background-color: #4F6F52;" type="submit">로그인</button>
+</form>
+<div class="mt-8 relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-4 dark:bg-background-dark text-slate-500 font-medium bg-[#fcfcf2]" style="">또는 다음 계정으로 계속하기</span>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-semibold text-sm text-slate-700 dark:text-slate-200" style="">
+<svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2C6.48 2 2 5.51 2 9.85c0 2.76 1.8 5.18 4.54 6.64-.17.6-.62 2.21-.71 2.53-.11.41.14.4.3.29.12-.08 1.96-1.33 2.74-1.86.37.05.74.08 1.13.08 5.52 0 10-3.51 10-7.85S17.52 2 12 2z"></path>
+</svg>
+                        Kakao
+                    </button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors font-semibold text-sm text-slate-700 dark:text-slate-200" style="">
+<div class="w-5 h-5 bg-[#03C75A] flex items-center justify-center text-white text-[10px] font-bold rounded-sm" style="">N</div>
+                        Naver
+                    </button>
+</div>
+<p class="mt-10 text-center text-sm text-slate-500 dark:text-slate-400" style="">계정이 없으신가요? <a class="font-bold text-primary hover:underline" href="#" style="">무료로 가입하세요</a></p>
+<footer class="mt-12 pt-8 border-t border-slate-100 dark:border-slate-900 flex justify-between text-[11px] text-slate-400 uppercase tracking-widest font-bold">
+<span class="" style="">© 2024 Cloud Memo</span>
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#" style="">개인정보처리방침</a>
+<a class="hover:text-primary" href="#" style="">이용약관</a>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</body></html>

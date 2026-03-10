@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cloud Memo Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4e6e52",
+                        "background-light": "#fcfcf2",
+                        "background-dark": "#171022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }</script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-primary/10 bg-white/80 dark:bg-background-dark/50 flex flex-col justify-between p-4">
+<div class="flex flex-col gap-8">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-primary size-10 rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20 bg-[#4e6e52]">
+<span class="material-symbols-outlined">cloud_done</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-slate-100 text-base font-bold leading-none">Cloud Memo</h1>
+<p class="text-primary text-xs font-medium mt-1">Professional Plan</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<p class="text-sm font-semibold">대시보드</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<p class="text-sm font-medium">모든 메모</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<p class="text-sm font-medium">공유됨</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">hard_drive</span>
+<p class="text-sm font-medium">저장공간</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-primary/5 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<p class="text-sm font-medium">설정</p>
+</a>
+</nav>
+</div>
+<div class="mt-auto space-y-4">
+<div class="p-3 bg-primary/5 rounded-xl border border-primary/10">
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-2">저장공간 사용량</p>
+<div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full bg-[#4e6e52]" style="width: 25%"></div>
+</div>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">10 GB 중 2.5 GB 사용</p>
+</div>
+<button class="w-full py-2.5 px-4 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/30 hover:opacity-90 transition-opacity bg-[#4e6e52]">결제 관리</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto bg-background-light">
+<!-- Header -->
+<header class="h-16 border-b border-primary/10 flex items-center justify-between px-8 bg-white/30 dark:bg-background-dark/30 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400" placeholder="메모 검색..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-10 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+</button>
+<div class="h-8 w-px bg-primary/10"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold leading-none">Alex Rivera</p>
+<p class="text-[11px] text-slate-500 font-medium">2023년부터 회원</p>
+</div>
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-primary/20" data-alt="User profile avatar of Alex Rivera" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA3HUEnioia5IMe2bfLluk65xO7e3moy5QUgl-xIMbj-XEeM6U4dBf8tFj2aiWeLDYql6gGzHvlVp4PLnZGMIwWpHB3Js2ZD2Uk9fEcnSLqSjE_77FPnbPP86KAgd28E2dif82XUz0Sn9vyRoNxzOKzxE91dvGcEuyBTfeQscZHCsjqLrvOlS9u0ArV4b8yiVUXFdd4YMMcau07VgAoCA00OQ2PHa-Cv9La_3s3AWqDRT0rsravyrOtHPitgxbQ9ssRV2gD1WixfnE2')"></div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 max-w-6xl mx-auto w-full space-y-8">
+<!-- Welcome Section -->
+<div>
+<h2 class="text-3xl font-black tracking-tight">반가워요, Alex님</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-1 font-medium">오늘의 생산성 요약입니다.</p>
+</div>
+<!-- Status Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Subscription Card -->
+<div class="md:col-span-2 bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-primary/5 shadow-sm relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-8xl text-primary">workspace_premium</span>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div>
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full uppercase tracking-wider">사용 중인 요금제</span>
+<h3 class="text-2xl font-bold mt-3">프로페셔널 플랜</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">연간 결제 • 다음 갱신일: 2024년 10월 12일</p>
+</div>
+<div class="mt-8 flex gap-3">
+<button class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-lg shadow-lg shadow-primary/20">결제 관리</button>
+<button class="px-5 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg">내역 보기</button>
+</div>
+</div>
+</div>
+<!-- Usage Card -->
+<div class="bg-white dark:bg-slate-800/50 p-6 rounded-xl border border-primary/5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold">이달의 사용량</h3>
+<span class="material-symbols-outlined text-primary">data_usage</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-500 font-medium">클라우드 저장공간</span>
+<span class="font-bold">2.5 / 10 GB</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 25%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-500 font-medium">API 호출</span>
+<span class="font-bold">6.8k / 10k</span>
+</div>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 68%"></div>
+</div>
+</div>
+</div>
+</div>
+<p class="text-xs text-slate-400 mt-4 leading-relaxed">사용량은 14일 후에 초기화됩니다. 제한 범위 내에서 잘 사용하고 계시네요.</p>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-white dark:bg-slate-800/50 rounded-xl border border-primary/5 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-primary/5 flex items-center justify-between">
+<h3 class="font-bold text-lg">최근 활동</h3>
+<a class="text-primary text-sm font-bold hover:underline" href="#">전체 보기</a>
+</div>
+<div class="divide-y divide-primary/5">
+<!-- Activity Item 1 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<p class="font-bold text-sm">Project Roadmap Q4</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">12분 전 수정 • 워크스페이스</p>
+</div>
+</div>
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full border-2 border-white dark:border-slate-800 bg-cover" data-alt="Avatar of female colleague" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1hsM08ByV1LCRBzVcO4d_Rg79D6RxuO7w6CyEAqHrmfhAtrZQ8rCQtz4K0OLz3hfFrJH3kbqrmodB-O8F6feKIXIaJ8bTVJJgx4nERdGkpp_OW7-FsNG5c2F-4g8Yu1l3wy3Mmi8VFCW50nPQwwaCTYwfZBfCCEos0k0iLBEKN2nDEwEwrI6AkteYp0CHgner2mxXMPeehV7sSs-VdH7_cz7jO5RbqnfcDTllh9Mwtoc1eWtxkmE6A9zQFVxPdQkH63vgSaapDt42')"></div>
+<div class="size-6 rounded-full border-2 border-white dark:border-slate-800 bg-cover" data-alt="Avatar of male colleague" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAu1epGj9I7t-w1qiTkLNY2VKjpUtV2Q8-tuW8YqY-DiuneKB8rBgtBoPBd1Z256KdTNSqwi2hQkfuyLkJXW8iRK7C1M1NpyewticS8mrRzuvBbeWsuKZGt8J_mfJ3ESzKhPTDUQfrXeOOI-0P6Zv8ATFoCWLfQFjH-zWl3jdCqEt0ls9O7iqk14gLJVOBDZug75LK7bmmPbB-OO9quGPVyZpWrF7BeUvSM6szXnK5BND3dJ8uHZfDZr7aXa2-8IcIbpOtauZTBAHLH')"></div>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center text-amber-600">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<p class="font-bold text-sm">Marketing Brainstorming</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">2시간 전 수정 • 개인</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_vert</span>
+</div>
+<!-- Activity Item 3 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined">checklist</span>
+</div>
+<div>
+<p class="font-bold text-sm">Weekly Sprint Goals</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">5시간 전 수정 • 공유</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_vert</span>
+</div>
+<!-- Activity Item 4 -->
+<div class="px-6 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<div>
+<p class="font-bold text-sm">Personal Journal</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">어제 수정 • 개인</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300">more_vert</span>
+</div>
+</div>
+</div>
+<!-- Footer Stats (Subtle) -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-12">
+<div class="text-center p-4 bg-primary/5 rounded-lg border border-primary/5">
+<p class="text-2xl font-black text-primary">124</p>
+<p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">전체 메모</p>
+</div>
+<div class="text-center p-4 bg-primary/5 rounded-lg border border-primary/5">
+<p class="text-2xl font-black text-primary">12</p>
+<p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">공유된 메모</p>
+</div>
+<div class="text-center p-4 bg-primary/5 rounded-lg border border-primary/5">
+<p class="text-2xl font-black text-primary">85%</p>
+<p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">생산성</p>
+</div>
+<div class="text-center p-4 bg-primary/5 rounded-lg border border-primary/5">
+<p class="text-2xl font-black text-primary">2.4k</p>
+<p class="text-xs font-bold text-slate-500 uppercase tracking-tighter">주간 단어 수</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
