@@ -1,246 +1,291 @@
 <!DOCTYPE html>
 
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#4F6F52",
-              "background-light": "#fcfcf2",
-              "background-dark": "#171c17",
-            },
-            fontFamily: {
-              "display": ["Inter"]
-            },
-            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#4F6F52",
+            "background-light": "#fcfcf2",
+            "background-dark": "#171c17",
           },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: { "DEFAULT": "0.5rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
         },
-      }
-    </script>
-<title>Cloud Memo</title>
+      },
+    }
+  </script>
+  <title>Cloud Memo</title>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
-<div class="flex h-screen w-full flex-col">
-<!-- Top Navigation Bar -->
-<header class="flex items-center justify-between border-b border-primary/10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 py-3 z-10">
-<div class="flex items-center gap-4">
-<div class="text-primary">
-<span class="material-symbols-outlined text-3xl">cloud_done</span>
-</div>
-<h2 class="text-lg font-bold tracking-tight">Cloud Memo</h2>
-</div>
-<div class="flex flex-1 justify-center max-w-xl px-10">
-<div class="relative w-full">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 text-xl">search</span>
-<input class="w-full bg-primary/5 border-none rounded-lg py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 placeholder:text-primary/40 text-sm" placeholder="Search all notes..." type="text"/>
-</div>
-</div>
-<div class="flex items-center gap-3">
-<button class="p-2 hover:bg-primary/10 rounded-lg text-slate-600 dark:text-slate-300 transition-colors">
-<span class="material-symbols-outlined">share</span>
-</button>
-<button class="p-2 hover:bg-primary/10 rounded-lg text-slate-600 dark:text-slate-300 transition-colors">
-<span class="material-symbols-outlined">delete</span>
-</button>
-<div class="h-8 w-[1px] bg-primary/10 mx-1"></div>
-<div class="size-9 rounded-full bg-primary/20 border border-primary/10 flex items-center justify-center overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="User profile avatar photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYHOM5lutzL8nH_t5_du35Q_IpQve4EHGmfURMy27oWyzLoVddRIDOdjbqF4m_lx6Naq61mxS81tgUjdbh05v9C658ndnu2R_Z1Jt69Ae7o4-vNqBgtE94mDxT0bs7HGwfxage3yy1RC5chdIC0XfbWLBpTTFkuYuXS7F7clZwY29ak2kNbsLsTyXUSKAYHT0lJYQNg-PxD6WmH8dSE05IjxhogGXV6t430gXMYU8aZ0vERuja-kwKKBD5xAJXXFn7zS1sZfbLHEUD"/>
-</div>
-</div>
-</header>
-<!-- Main Content Area: 3-Pane Layout -->
-<main class="flex flex-1 overflow-hidden">
-<!-- Pane 1: Sidebar Folders -->
-<aside class="w-64 border-r border-primary/10 bg-background-light dark:bg-background-dark flex flex-col p-4 gap-6 shrink-0">
-<div class="space-y-1">
-<h3 class="px-3 text-xs font-semibold uppercase tracking-wider text-primary/60 mb-2">라이브러리</h3>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white font-medium" href="#">
-<span class="material-symbols-outlined text-xl">cloud</span>
-<span class="text-sm">All Cloud</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">description</span>
-<span class="text-sm">메모</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">group</span>
-<span class="text-sm">공유됨</span>
-</a>
-</div>
-<div class="space-y-1">
-<div class="flex items-center justify-between px-3 mb-2">
-<h3 class="text-xs font-semibold uppercase tracking-wider text-primary/60">폴더</h3>
-<button class="text-primary hover:bg-primary/10 p-1 rounded">
-<span class="material-symbols-outlined text-sm">create_new_folder</span>
-</button>
-</div>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">folder</span>
-<span class="text-sm">업무 프로젝트</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">folder</span>
-<span class="text-sm">개인적인 아이디어</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">folder</span>
-<span class="text-sm">여행 기록</span>
-</a>
-</div>
-<div class="mt-auto space-y-1">
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-500 dark:text-slate-400 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">archive</span>
-<span class="text-sm">보관함</span>
-</a>
-<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-500 dark:text-slate-400 transition-colors" href="#">
-<span class="material-symbols-outlined text-xl">delete</span>
-<span class="text-sm">최근 삭제된 항목</span>
-</a>
-</div>
-</aside>
-<!-- Pane 2: Notes List -->
-<section class="w-80 border-r border-primary/10 bg-white/40 dark:bg-slate-900/20 flex flex-col shrink-0">
-<div class="p-4 border-b border-primary/5 flex items-center justify-between bg-white/30 dark:bg-background-dark/30">
-<h2 class="font-bold text-slate-800 dark:text-slate-100">메모</h2>
-<button class="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-semibold transition-all shadow-sm"><span class="material-symbols-outlined text-sm">add</span>새 메모</button>
-</div>
-<div class="flex-1 overflow-y-auto scrollbar-hide">
-<!-- Note Item Active -->
-<div class="p-4 bg-primary/20 border-l-4 border-primary cursor-pointer">
-<div class="flex justify-between items-start mb-1">
-<h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Project Brainstorm</h4>
-<span class="text-[10px] text-primary font-medium">10:45 AM</span>
-</div>
-<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">The initial ideas for the cloud sync architectural implementation involving distributed systems...</p>
-</div>
-<!-- Note Items -->
-<div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
-<div class="flex justify-between items-start mb-1">
-<h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Grocery List</h4>
-<span class="text-[10px] text-slate-400">화</span>
-</div>
-<p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Milk, Eggs, Bread, Spinach, Apples, Almond Milk, Coffee Beans...</p>
-</div>
-<div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
-<div class="flex justify-between items-start mb-1">
-<h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Website Redesign</h4>
-<span class="text-[10px] text-slate-400">월</span>
-</div>
-<p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Focus on minimalist aesthetic, improved accessibility, and dark mode support...</p>
-</div>
-<div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
-<div class="flex justify-between items-start mb-1">
-<h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Meeting Minutes: Product Sync</h4>
-<span class="text-[10px] text-slate-400">10월 12일</span>
-</div>
-<p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Attendees: Sarah, Mike, John. Discussed Q3 roadmap and feature prioritizations...</p>
-</div>
-<div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
-<div class="flex justify-between items-start mb-1">
-<h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Vacation Planning - Japan</h4>
-<span class="text-[10px] text-slate-400">Oct 12</span>
-</div>
-<p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Tokyo (3 days), Kyoto (4 days), Osaka (2 days). Check flight prices and hotel availability...</p>
-</div>
-</div>
-</section>
-<!-- Pane 3: Editor -->
-<section class="flex-1 bg-white dark:bg-background-dark flex flex-col">
-<!-- Editor Toolbar -->
-<div class="px-6 py-2 border-b border-primary/5 flex items-center gap-1 overflow-x-auto no-scrollbar">
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_bold</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_italic</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_underlined</span>
-</button>
-<div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_list_bulleted</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_list_numbered</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">checklist</span>
-</button>
-<div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_align_left</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">format_align_center</span>
-</button>
-<div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">image</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">link</span>
-</button>
-<button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined">code</span>
-</button>
-<div class="ml-auto flex items-center gap-2 text-slate-400 text-xs font-medium"><span class="material-symbols-outlined text-xs">sync</span>방금 동기화됨</div>
-</div>
-<!-- Editor Surface -->
-<div class="flex-1 overflow-y-auto p-10 max-w-4xl mx-auto w-full">
-<div class="mb-8">
-<div class="text-xs text-slate-400 uppercase font-bold tracking-[0.2em] mb-4">October 26, 2023 · 10:45 AM</div>
-<h1 class="text-4xl font-extrabold text-slate-900 dark:text-slate-50 mb-4 focus:outline-none" contenteditable="true">Project Brainstorm</h1>
-</div>
-<div class="prose dark:prose-invert prose-slate max-w-none text-lg text-slate-700 dark:text-slate-300 focus:outline-none" contenteditable="true">
-<p>The initial ideas for the cloud sync architectural implementation involving distributed systems and real-time data persistence.</p>
-<h3 class="text-xl font-bold mt-8 mb-4">핵심 목표</h3>
-<ul class="list-disc pl-5 space-y-2">
-<li><strong>오프라인 우선 경험:</strong> Users should be able to create and edit notes without an active internet connection.</li>
-<li><strong>심리스한 동기화:</strong> Changes should propagate instantly across all connected devices using web sockets.</li>
-<li><strong>종단간 암호화:</strong> Security is paramount. Private keys should stay on the device.</li>
-</ul>
-<h3 class="text-xl font-bold mt-8 mb-4">다음 단계</h3>
-<div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-primary">check_box</span>
-<span>동기화 서비스용 API 명세서 초안 작성</span>
-</div>
-<div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-slate-300">check_box_outline_blank</span>
-<span>메타데이터 레이어를 위한 MongoDB와 PostgreSQL 중 선택</span>
-</div>
-<div class="flex items-center gap-3 mb-2">
-<span class="material-symbols-outlined text-slate-300">check_box_outline_blank</span>
-<span>충돌 해결 전략 연구 (CRDT vs OT)</span>
-</div>
-<div class="my-8 p-6 bg-primary/10 rounded-xl border-l-4 border-primary italic">"단순함은 궁극의 정교함이다. 클라우드는 사용자에게 보이지 않으면서 완벽한 신뢰성을 제공해야 한다."</div>
-<p>Need to schedule a follow-up meeting with the infrastructure team next Tuesday to discuss the scaling requirements for the websocket cluster.</p>
-<!-- Image placeholder in editor -->
-<div class="mt-8 rounded-xl overflow-hidden border border-primary/10">
-<img class="w-full h-auto" data-alt="Laptop with code on screen in a workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Y26FS_y7hjdUpswtTuT08LXuhfyBeIZBp2EMVRMhsVYBn-HhVuv58p5Ok4_f0UpWGKp5SHJ-1RFW-S4zgFS0X4So-KfH1qBnvfVk8aPIQi_HdOegrMaUe7WW2BKKSrkMY76pBVZrhZJcDrtPKkpHep1-DPyj2gku8OsEYhS7SzOvKZHJc8fNxo_Q5-XUTj21DW5O4xcbZtNSBAnc7rqL6I4I3gzQGB2uJSKMZyE9k0ML9eboSaFxvmMVDR0YcGN_FqBnt25xscTI"/>
-</div>
-</div>
-</div>
-</section>
-</main>
-<!-- Status Footer -->
-<footer class="h-8 border-t border-primary/10 bg-background-light dark:bg-background-dark flex items-center justify-between px-4 text-[11px] text-slate-500 font-medium">
-<div class="flex gap-4">
-<span>폴더: 12</span>
-<span>메모: 148</span>
-</div>
-<div class="flex gap-4 items-center">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[12px] text-green-500">cloud_done</span> 모든 시스템 정상 작동 중</span>
-<span>메모: 148</span>
-</div>
-</footer>
-</div>
-</body></html>
+
+<body
+  class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+  <div class="flex h-screen w-full flex-col">
+    <!-- Top Navigation Bar -->
+    <header
+      class="flex items-center justify-between border-b border-primary/10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 py-3 z-10">
+      <div class="flex items-center gap-4">
+        <div class="text-primary">
+          <span class="material-symbols-outlined text-3xl">cloud_done</span>
+        </div>
+        <h2 class="text-lg font-bold tracking-tight">Cloud Memo</h2>
+      </div>
+      <div class="flex flex-1 justify-center max-w-xl px-10">
+        <div class="relative w-full">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 text-xl">search</span>
+          <input
+            class="w-full bg-primary/5 border-none rounded-lg py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 placeholder:text-primary/40 text-sm"
+            placeholder="Search all notes..." type="text" />
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-600 dark:text-slate-300 transition-colors">
+          <span class="material-symbols-outlined">share</span>
+        </button>
+        <button class="p-2 hover:bg-primary/10 rounded-lg text-slate-600 dark:text-slate-300 transition-colors">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+        <div class="h-8 w-[1px] bg-primary/10 mx-1"></div>
+        <div
+          class="size-9 rounded-full bg-primary/20 border border-primary/10 flex items-center justify-center overflow-hidden">
+          <img class="w-full h-full object-cover" data-alt="User profile avatar photo"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYHOM5lutzL8nH_t5_du35Q_IpQve4EHGmfURMy27oWyzLoVddRIDOdjbqF4m_lx6Naq61mxS81tgUjdbh05v9C658ndnu2R_Z1Jt69Ae7o4-vNqBgtE94mDxT0bs7HGwfxage3yy1RC5chdIC0XfbWLBpTTFkuYuXS7F7clZwY29ak2kNbsLsTyXUSKAYHT0lJYQNg-PxD6WmH8dSE05IjxhogGXV6t430gXMYU8aZ0vERuja-kwKKBD5xAJXXFn7zS1sZfbLHEUD" />
+        </div>
+      </div>
+    </header>
+    <!-- Main Content Area: 3-Pane Layout -->
+    <main class="flex flex-1 overflow-hidden">
+      <!-- Pane 1: Sidebar Folders -->
+      <aside
+        class="w-64 border-r border-primary/10 bg-background-light dark:bg-background-dark flex flex-col p-4 gap-6 shrink-0">
+        <div class="space-y-1">
+          <h3 class="px-3 text-xs font-semibold uppercase tracking-wider text-primary/60 mb-2">라이브러리</h3>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white font-medium" href="#">
+            <span class="material-symbols-outlined text-xl">cloud</span>
+            <span class="text-sm">All Cloud</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">description</span>
+            <span class="text-sm">메모</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">group</span>
+            <span class="text-sm">공유 메모</span>
+          </a>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center justify-between px-3 mb-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-primary/60">폴더</h3>
+            <button class="text-primary hover:bg-primary/10 p-1 rounded">
+              <span class="material-symbols-outlined text-sm">create_new_folder</span>
+            </button>
+          </div>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">folder</span>
+            <span class="text-sm">업무 프로젝트</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">folder</span>
+            <span class="text-sm">개인적인 아이디어</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-700 dark:text-slate-300 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">folder</span>
+            <span class="text-sm">여행 기록</span>
+          </a>
+        </div>
+        <div class="mt-auto space-y-1">
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-500 dark:text-slate-400 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">archive</span>
+            <span class="text-sm">보관함</span>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 text-slate-500 dark:text-slate-400 transition-colors"
+            href="#">
+            <span class="material-symbols-outlined text-xl">delete</span>
+            <span class="text-sm">최근 삭제된 항목</span>
+          </a>
+        </div>
+      </aside>
+      <!-- Pane 2: Notes List -->
+      <section class="w-80 border-r border-primary/10 bg-white/40 dark:bg-slate-900/20 flex flex-col shrink-0">
+        <div
+          class="p-4 border-b border-primary/5 flex items-center justify-between bg-white/30 dark:bg-background-dark/30">
+          <h2 class="font-bold text-slate-800 dark:text-slate-100">메모</h2>
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-semibold transition-all shadow-sm"><span
+              class="material-symbols-outlined text-sm">add</span>새 메모</button>
+        </div>
+        <div class="flex-1 overflow-y-auto scrollbar-hide">
+          <!-- Note Item Active -->
+          <div class="p-4 bg-primary/20 border-l-4 border-primary cursor-pointer">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Project Brainstorm</h4>
+              <span class="text-[10px] text-primary font-medium">10:45 AM</span>
+            </div>
+            <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">The initial ideas for the cloud sync
+              architectural implementation involving distributed systems...</p>
+          </div>
+          <!-- Note Items -->
+          <div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Grocery List</h4>
+              <span class="text-[10px] text-slate-400">화</span>
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Milk, Eggs, Bread, Spinach, Apples,
+              Almond Milk, Coffee Beans...</p>
+          </div>
+          <div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Website Redesign</h4>
+              <span class="text-[10px] text-slate-400">월</span>
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Focus on minimalist aesthetic, improved
+              accessibility, and dark mode support...</p>
+          </div>
+          <div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Meeting Minutes: Product Sync</h4>
+              <span class="text-[10px] text-slate-400">10월 12일</span>
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Attendees: Sarah, Mike, John. Discussed
+              Q3 roadmap and feature prioritizations...</p>
+          </div>
+          <div class="p-4 border-b border-primary/5 hover:bg-primary/5 cursor-pointer transition-colors">
+            <div class="flex justify-between items-start mb-1">
+              <h4 class="font-semibold text-slate-900 dark:text-slate-100 truncate">Vacation Planning - Japan</h4>
+              <span class="text-[10px] text-slate-400">Oct 12</span>
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-500 line-clamp-2">Tokyo (3 days), Kyoto (4 days), Osaka (2
+              days). Check flight prices and hotel availability...</p>
+          </div>
+        </div>
+      </section>
+      <!-- Pane 3: Editor -->
+      <section class="flex-1 bg-white dark:bg-background-dark flex flex-col">
+        <!-- Editor Toolbar -->
+        <div class="px-6 py-2 border-b border-primary/5 flex items-center gap-1 overflow-x-auto no-scrollbar">
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_bold</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_italic</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_underlined</span>
+          </button>
+          <div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_list_bulleted</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_list_numbered</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">checklist</span>
+          </button>
+          <div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_align_left</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">format_align_center</span>
+          </button>
+          <div class="w-[1px] h-5 bg-primary/10 mx-1"></div>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">image</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">link</span>
+          </button>
+          <button class="p-1.5 hover:bg-primary/10 rounded transition-colors text-slate-600 dark:text-slate-400">
+            <span class="material-symbols-outlined">code</span>
+          </button>
+          <div class="ml-auto flex items-center gap-2 text-slate-400 text-xs font-medium"><span
+              class="material-symbols-outlined text-xs">sync</span>방금 동기화됨</div>
+        </div>
+        <!-- Editor Surface -->
+        <div class="flex-1 overflow-y-auto p-10 max-w-4xl mx-auto w-full">
+          <div class="mb-8">
+            <div class="text-xs text-slate-400 uppercase font-bold tracking-[0.2em] mb-4">October 26, 2023 · 10:45 AM
+            </div>
+            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-slate-50 mb-4 focus:outline-none"
+              contenteditable="true">Project Brainstorm</h1>
+          </div>
+          <div
+            class="prose dark:prose-invert prose-slate max-w-none text-lg text-slate-700 dark:text-slate-300 focus:outline-none"
+            contenteditable="true">
+            <p>The initial ideas for the cloud sync architectural implementation involving distributed systems and
+              real-time data persistence.</p>
+            <h3 class="text-xl font-bold mt-8 mb-4">핵심 목표</h3>
+            <ul class="list-disc pl-5 space-y-2">
+              <li><strong>오프라인 우선 경험:</strong> Users should be able to create and edit notes without an active internet
+                connection.</li>
+              <li><strong>심리스한 동기화:</strong> Changes should propagate instantly across all connected devices using web
+                sockets.</li>
+              <li><strong>종단간 암호화:</strong> Security is paramount. Private keys should stay on the device.</li>
+            </ul>
+            <h3 class="text-xl font-bold mt-8 mb-4">다음 단계</h3>
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-primary">check_box</span>
+              <span>동기화 서비스용 API 명세서 초안 작성</span>
+            </div>
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-slate-300">check_box_outline_blank</span>
+              <span>메타데이터 레이어를 위한 MongoDB와 PostgreSQL 중 선택</span>
+            </div>
+            <div class="flex items-center gap-3 mb-2">
+              <span class="material-symbols-outlined text-slate-300">check_box_outline_blank</span>
+              <span>충돌 해결 전략 연구 (CRDT vs OT)</span>
+            </div>
+            <div class="my-8 p-6 bg-primary/10 rounded-xl border-l-4 border-primary italic">"단순함은 궁극의 정교함이다. 클라우드는 사용자에게
+              보이지 않으면서 완벽한 신뢰성을 제공해야 한다."</div>
+            <p>Need to schedule a follow-up meeting with the infrastructure team next Tuesday to discuss the scaling
+              requirements for the websocket cluster.</p>
+            <!-- Image placeholder in editor -->
+            <div class="mt-8 rounded-xl overflow-hidden border border-primary/10">
+              <img class="w-full h-auto" data-alt="Laptop with code on screen in a workspace"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Y26FS_y7hjdUpswtTuT08LXuhfyBeIZBp2EMVRMhsVYBn-HhVuv58p5Ok4_f0UpWGKp5SHJ-1RFW-S4zgFS0X4So-KfH1qBnvfVk8aPIQi_HdOegrMaUe7WW2BKKSrkMY76pBVZrhZJcDrtPKkpHep1-DPyj2gku8OsEYhS7SzOvKZHJc8fNxo_Q5-XUTj21DW5O4xcbZtNSBAnc7rqL6I4I3gzQGB2uJSKMZyE9k0ML9eboSaFxvmMVDR0YcGN_FqBnt25xscTI" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- Status Footer -->
+    <footer
+      class="h-8 border-t border-primary/10 bg-background-light dark:bg-background-dark flex items-center justify-between px-4 text-[11px] text-slate-500 font-medium">
+      <div class="flex gap-4">
+        <span>폴더: 12</span>
+        <span>메모: 148</span>
+      </div>
+      <div class="flex gap-4 items-center">
+        <span class="flex items-center gap-1"><span
+            class="material-symbols-outlined text-[12px] text-green-500">cloud_done</span> 모든 시스템 정상 작동 중</span>
+        <span>메모: 148</span>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>

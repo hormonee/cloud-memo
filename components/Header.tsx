@@ -6,12 +6,23 @@ import { createClient } from '@/utils/supabase/client'
 import LogoIcon from './LogoIcon'
 import ThemeToggle from './ThemeToggle'
 import { signOut } from '@/app/auth/actions'
+import { useSidebar } from './SidebarContext'
 
 export default function Header({ variant = 'main' }: { variant?: 'main' | 'dashboard' | 'payment' }) {
+  const { toggleSidebar } = useSidebar()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [displayName, setDisplayName] = useState('사용자')
   const [joinedYear, setJoinedYear] = useState(new Date().getFullYear())
   const [avatarUrl, setAvatarUrl] = useState('')
+
+  const [isPending, startTransition] = React.useTransition()
+
+  const handleSignOut = async (e: React.FormEvent) => {
+    e.preventDefault()
+    startTransition(async () => {
+      await signOut()
+    })
+  }
 
   useEffect(() => {
     const fetchAuthAndProfile = async () => {
@@ -65,13 +76,13 @@ export default function Header({ variant = 'main' }: { variant?: 'main' | 'dashb
                     대시보드
                   </button>
                 </Link>
-                <form action={signOut}>
+                <form onSubmit={handleSignOut}>
                   {variant === 'payment' ? (
-                    <button type="submit" className="flex items-center justify-center size-9 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-all group ml-2" title="로그아웃">
+                    <button type="submit" disabled={isPending} className="flex items-center justify-center size-9 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-all group ml-2 disabled:opacity-50" title="로그아웃">
                       <span className="material-symbols-outlined text-[20px] transition-transform group-hover:scale-110">logout</span>
                     </button>
                   ) : (
-                    <button type="submit" className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors ml-2">
+                    <button type="submit" disabled={isPending} className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors ml-2 disabled:opacity-50">
                       로그아웃
                     </button>
                   )}
@@ -87,7 +98,7 @@ export default function Header({ variant = 'main' }: { variant?: 'main' | 'dashb
           </div>
         </div>
       ) : (
-        <div className="flex flex-1 justify-between items-center ml-8 lg:ml-16">
+        <div className="flex flex-1 justify-between items-center ml-4 lg:ml-8">
           <div className="relative w-full max-w-md hidden sm:block">
             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
             <input 
@@ -110,8 +121,8 @@ export default function Header({ variant = 'main' }: { variant?: 'main' | 'dashb
               </div>
               <div className="size-10 rounded-full bg-cover bg-center border-2 border-primary/20 shadow-sm" style={{ backgroundImage: `url('${avatarUrl}')` }}></div>
             </div>
-            <form action={signOut} className="ml-2 hidden sm:block">
-              <button type="submit" className="flex items-center justify-center size-9 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-all group" title="로그아웃">
+            <form onSubmit={handleSignOut} className="ml-2 hidden sm:block">
+              <button type="submit" disabled={isPending} className="flex items-center justify-center size-9 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-all group disabled:opacity-50" title="로그아웃">
                 <span className="material-symbols-outlined text-[20px] transition-transform group-hover:scale-110">logout</span>
               </button>
             </form>

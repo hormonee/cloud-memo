@@ -1,65 +1,115 @@
-import { render, screen, act } from '@testing-library/react'
-import NotePage from './page'
+import { render, screen } from '@testing-library/react'
 import React, { Suspense } from 'react'
+
+// Note: The main page.tsx is now a Server Component (async) that requires
+// Supabase auth. We test the NoteEditor client component directly.
+import NoteEditor from './NoteEditor'
+import NotesList from '../NotesList'
+import NotesSidebar from '../NotesSidebar'
 
 // Mock Supabase client
 jest.mock('@/utils/supabase/client', () => ({
   createClient: jest.fn(() => ({
     from: jest.fn(() => ({
-      select: jest.fn(() => {
-        const queryBuilder: any = {
-          eq: jest.fn(() => queryBuilder),
-          single: jest.fn(() => Promise.resolve({ data: null, error: new Error('not found') })),
-        }
-        return queryBuilder
-      }),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => Promise.resolve({ error: null })),
+      })),
     })),
   })),
 }))
 
-// Mock useRouter & useParams
+// Mock useRouter
 jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-  useParams: jest.fn(() => ({ id: '1' })),
+  useRouter: jest.fn(() => ({ push: jest.fn(), refresh: jest.fn() })),
+  useParams: jest.fn(() => ({ id: 'test-note-id' })),
 }))
 
-const renderWithSuspense = (component: React.ReactNode) => {
-  return render(<Suspense fallback={<div>Loading...</div>}>{component}</Suspense>)
-}
+// Mock server actions
+jest.mock('../actions', () => ({
+  createNote: jest.fn(),
+  deleteNote: jest.fn(),
+  createFolder: jest.fn(),
+  shareNote: jest.fn(),
+  unshareNote: jest.fn(),
+}))
 
-describe('Note Editor Page', () => {
-  it('renders 3-pane layout components', async () => {
-    renderWithSuspense(<NotePage />)
-    
-    // Pane 1: Library/Folders
-    expect(await screen.findByText('라이브러리')).toBeInTheDocument()
-    expect(screen.getByText('폴더')).toBeInTheDocument()
-    
-    // Pane 2: Notes List
-    expect(screen.getAllByText('메모').length).toBeGreaterThan(0)
-    expect(screen.getByText('새 메모')).toBeInTheDocument()
-    
-    // Pane 3: Editor surface
-    expect(screen.getByPlaceholderText(/Search all notes/i)).toBeInTheDocument()
-  })
+const renderWithSuspense = (component: React.ReactNode) =>
+  render(<Suspense fallback={<div>Loading...</div>}>{component}</Suspense>)
 
-  it('renders editor toolbar buttons', async () => {
-    renderWithSuspense(<NotePage />)
-    
-    // wait for render
-    await screen.findByText('라이브러리')
-    
-    // Toolbar buttons are rendered as spans inside buttons
+describe('NoteEditor', () => {
+  it('renders editor toolbar with formatting buttons', () => {
+    renderWithSuspense(
+      <NoteEditor
+        noteId="test-note-id"
+        initialTitle="Project Brainstorm"
+        initialContent="<p>Hello world</p>"
+        lastUpdated={null}
+        canEdit={true}
+        collaborators={[]}
+      />
+    )
+
     expect(screen.getAllByText('format_bold').length).toBeGreaterThan(0)
     expect(screen.getAllByText('format_italic').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('format_underlined').length).toBeGreaterThan(0)
+    expect(screen.getByText('share')).toBeInTheDocument()
+    expect(screen.getByText('delete')).toBeInTheDocument()
   })
 
-  it('displays note title and content', async () => {
-    renderWithSuspense(<NotePage />)
-    // There are multiple instances of 'Project Brainstorm' (list and editor) once loaded
-    const titles = await screen.findAllByText('Project Brainstorm', {}, { timeout: 3000 })
-    expect(titles.length).toBeGreaterThan(0)
+  it('shows read-only indicator for viewer', () => {
+    renderWithSuspense(
+      <NoteEditor
+        noteId="test-note-id"
+        initialTitle="읽기 전용 노트"
+        initialContent=""
+        lastUpdated={null}
+        canEdit={false}
+        collaborators={[]}
+      />
+    )
+
+    expect(screen.getByText(/읽기 전용/)).toBeInTheDocument()
+  })
+})
+
+describe('NotesList', () => {
+  it('renders new note button', () => {
+    render(
+      <NotesList
+        notes={[]}
+        activeNoteId={undefined}
+        folderId={undefined}
+      />
+    )
+    expect(screen.getByText('새 메모')).toBeInTheDocument()
+  })
+
+  it('renders note items with title', () => {
+    const notes = [
+      { id: '1', title: 'Project Brainstorm', content: '<p>Test content</p>', updated_at: new Date().toISOString(), folder_id: null },
+    ]
+    render(<NotesList notes={notes} activeNoteId="1" folderId={undefined} />)
+    expect(screen.getByText('Project Brainstorm')).toBeInTheDocument()
+  })
+
+  it('shows empty state when no notes', () => {
+    render(<NotesList notes={[]} activeNoteId={undefined} folderId={undefined} />)
+    expect(screen.getByText(/메모가 없습니다/)).toBeInTheDocument()
+  })
+})
+
+describe('NotesSidebar', () => {
+  it('renders library section and folder section', () => {
+    render(<NotesSidebar folders={[]} currentFolderId={undefined} noteId={undefined} />)
+    expect(screen.getByText('라이브러리')).toBeInTheDocument()
+    expect(screen.getByText('폴더')).toBeInTheDocument()
+    expect(screen.getByText('All Cloud')).toBeInTheDocument()
+    expect(screen.getByText('공유 메모')).toBeInTheDocument()
+  })
+
+  it('renders user folders', () => {
+    const folders = [{ id: 'f1', name: '업무 프로젝트' }]
+    render(<NotesSidebar folders={folders} currentFolderId={undefined} noteId={undefined} />)
+    expect(screen.getByText('업무 프로젝트')).toBeInTheDocument()
   })
 })

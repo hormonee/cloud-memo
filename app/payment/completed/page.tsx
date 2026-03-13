@@ -12,8 +12,8 @@ export default function PaymentCompletedPage() {
     billingCycle: '월간 구독 이용 중',
     amount: '₩9,900 / 월',
     transactionId: 'TRX-940284',
-    date: '2023.10.27 14:30:05',
-    nextBillingDate: '2023.11.27'
+    date: '2026.03.13 11:30:05',
+    nextBillingDate: '2026.04.13'
   }
 
   return (

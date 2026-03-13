@@ -1,7 +1,12 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
-export default async function NotesIndexPage() {
+interface PageProps {
+  searchParams: Promise<{ folder?: string; filter?: string }>
+}
+
+export default async function NotesIndexPage({ searchParams }: PageProps) {
+  const { folder: folderId, filter } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -9,7 +14,39 @@ export default async function NotesIndexPage() {
     redirect('/auth')
   }
 
-  // Fetch the most recently updated note for the user
+  // 1. If filter is SHARED
+  if (filter === 'shared') {
+    const { data: sharedNote } = await supabase
+      .from('collaborators')
+      .select('note_id, notes(updated_at)')
+      .eq('user_id', user.id)
+      .order('note_id', { ascending: false }) // Fallback order
+      .limit(1)
+      .single()
+
+    if (sharedNote?.note_id) {
+      redirect(`/notes/${sharedNote.note_id}?filter=shared`)
+    }
+  }
+
+  // 2. If FOLDER is specified
+  if (folderId) {
+    const { data: folderNote } = await supabase
+      .from('notes')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('folder_id', folderId)
+      .eq('is_trashed', false)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (folderNote) {
+      redirect(`/notes/${folderNote.id}?folder=${folderId}`)
+    }
+  }
+
+  // 3. Default: Redirect to the most recently updated personal note
   const { data: recentNote } = await supabase
     .from('notes')
     .select('id')
@@ -21,8 +58,24 @@ export default async function NotesIndexPage() {
 
   if (recentNote) {
     redirect(`/notes/${recentNote.id}`)
-  } else {
-    // Redirect to the default/mock note if no notes exist
-    redirect('/notes/1')
   }
+
+  // No notes exist — auto-create the first one
+  const { data: newNote } = await supabase
+    .from('notes')
+    .insert({
+      user_id: user.id,
+      title: '첫 번째 메모',
+      content: '<p>여기에 메모를 입력하세요. Cloud Memo에 오신 것을 환영합니다! ☁️</p>',
+      is_trashed: false,
+    })
+    .select('id')
+    .single()
+
+  if (newNote) {
+    redirect(`/notes/${newNote.id}`)
+  }
+
+  // Final fallback (should not reach here)
+  redirect('/dashboard')
 }

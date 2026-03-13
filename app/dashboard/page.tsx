@@ -34,6 +34,11 @@ export default async function DashboardPage() {
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id)
 
+  const { count: totalFolders } = await supabase
+    .from('folders')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
   // 4. Fetch recent notes
   const { data: recentNotes } = await supabase
     .from('notes')
@@ -158,7 +163,7 @@ export default async function DashboardPage() {
             { label: '전체 메모', value: totalNotes?.toString() || '0' },
             { label: '공유된 메모', value: sharedNotes?.toString() || '0' },
             { label: '사용된 태그', value: '0' },
-            { label: '폴더 수', value: '0' },
+            { label: '폴더 수', value: totalFolders?.toString() || '0' },
           ].map((stat, idx) => (
             <div key={idx} className="text-center p-6 bg-white dark:bg-slate-800/50 rounded-2xl border border-primary/10 shadow-sm hover:border-primary/30 transition-all group">
               <p className="text-3xl font-black text-primary group-hover:scale-110 transition-transform">{stat.value}</p>
