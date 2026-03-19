@@ -31,11 +31,13 @@ export default function NotesList({ notes, activeNoteId, folderId, isTrashView =
   const handleCreateNote = () => {
     startTransition(async () => {
       const result = await createNote(folderId)
-      if (result.id) {
+      if (result && 'id' in result) {
         let url = `/notes/${result.id}`
         if (filter) url += `?filter=${filter}`
         else if (currentUrlFolder) url += `?folder=${currentUrlFolder}`
         router.push(url)
+      } else if (result && 'error' in result) {
+        console.error('Note creation failed:', result.error)
       }
     })
   }

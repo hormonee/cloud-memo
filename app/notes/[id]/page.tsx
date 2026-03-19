@@ -67,51 +67,55 @@ export default async function NotePage({ params, searchParams }: PageProps) {
   const { data: notes } = await notesQuery
 
   // 3. Fetch current note + collaborators
-  const { data: note } = await supabase
-    .from('notes')
-    .select('id, title, content, updated_at, folder_id, is_trashed')
-    .eq('id', id)
-    .single()
-
-  // If note belongs to this user or they are a collaborator, allow access
+  let note = null
   let canEdit = false
   let canView = false
   let isTrashed = false
 
-  if (note) {
-    // If trashed, we still want to view it in the trash context
-    isTrashed = note.is_trashed
-    
-    // Check ownership
-    const { data: ownedNote } = await supabase
+  if (id !== 'none') {
+    const { data: fetchedNote } = await supabase
       .from('notes')
-      .select('id')
+      .select('id, title, content, updated_at, folder_id, is_trashed')
       .eq('id', id)
-      .eq('user_id', user.id)
       .single()
+    
+    note = fetchedNote
 
-    if (ownedNote) {
-      canEdit = true
-      canView = true
-    } else {
-      // Check collaborator
-      const { data: collab } = await supabase
-        .from('collaborators')
-        .select('role')
-        .eq('note_id', id)
+    if (note) {
+      isTrashed = note.is_trashed
+      
+      const { data: ownedNote } = await supabase
+        .from('notes')
+        .select('id')
+        .eq('id', id)
         .eq('user_id', user.id)
         .single()
 
-      if (collab) {
+      if (ownedNote) {
+        canEdit = true
         canView = true
-        canEdit = collab.role === 'editor'
-      }
-    }
+      } else {
+        const { data: collab } = await supabase
+          .from('collaborators')
+          .select('role')
+          .eq('note_id', id)
+          .eq('user_id', user.id)
+          .single()
 
-    if (!canView) redirect('/notes')
+        if (collab) {
+          canView = true
+          canEdit = collab.role === 'editor'
+        }
+      }
+
+      if (!canView) redirect('/notes')
+    } else {
+      redirect('/notes')
+    }
   } else {
-    // Note not found — redirect
-    redirect('/notes')
+    // id 가 'none' 인 경우 (예: 공유된 메모가 하나도 없을 때)
+    canView = true 
+    canEdit = false
   }
 
   // 4. Fetch collaborators for share modal (only if owner can manage)

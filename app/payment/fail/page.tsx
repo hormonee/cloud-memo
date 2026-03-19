@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
@@ -10,7 +10,7 @@ import AlertModal from '@/components/AlertModal'
 
 import { updatePaymentLog } from '../actions'
 
-export default function PaymentFailPage() {
+function PaymentFailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [isAlertOpen, setIsAlertOpen] = useState(false)
@@ -20,7 +20,7 @@ export default function PaymentFailPage() {
   const orderId = searchParams.get('orderId')
 
   useEffect(() => {
-    // 최소한 code와 message는 있어야 함
+    // 필수 파라미터가 없으면 경고창 표시
     if (!code || !message) {
       setIsAlertOpen(true)
       return
@@ -81,12 +81,14 @@ export default function PaymentFailPage() {
 
         <Footer />
       </div>
-      <AlertModal 
-        isOpen={isAlertOpen}
-        title="잘못된 접근입니다"
-        message="결제 실패 정보가 없거나 잘못된 접근입니다. 결제 페이지로 이동합니다."
-        onConfirm={() => router.push('/payment')}
-      />
     </div>
+  )
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={null}>
+      <PaymentFailContent />
+    </Suspense>
   )
 }

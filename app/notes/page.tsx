@@ -18,14 +18,16 @@ export default async function NotesIndexPage({ searchParams }: PageProps) {
   if (filter === 'shared') {
     const { data: sharedNote } = await supabase
       .from('collaborators')
-      .select('note_id, notes(updated_at)')
+      .select('note_id')
       .eq('user_id', user.id)
-      .order('note_id', { ascending: false }) // Fallback order
       .limit(1)
       .single()
 
     if (sharedNote?.note_id) {
       redirect(`/notes/${sharedNote.note_id}?filter=shared`)
+    } else {
+      // 공유된 메모가 하나도 없는 경우
+      redirect('/notes/none?filter=shared')
     }
   }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useActionState, useRef } from 'react'
+import React, { useState, useEffect, useActionState, useRef, Suspense } from 'react'
 import { login, signup, signInWithOAuth } from './actions'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { type Provider } from '@supabase/supabase-js'
@@ -8,7 +8,7 @@ import LogoIcon from '@/components/LogoIcon'
 import ThemeToggle from '@/components/ThemeToggle'
 import Link from 'next/link'
 
-export default function AuthPage() {
+function AuthForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
   
@@ -309,5 +309,17 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-[#fcfcf2] dark:bg-[#1A1C19]">
+        <div className="size-12 border-4 border-[#4F6F52]/20 border-t-[#4F6F52] rounded-full animate-spin"></div>
+      </div>
+    }>
+      <AuthForm />
+    </Suspense>
   )
 }
