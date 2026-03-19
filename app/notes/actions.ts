@@ -4,11 +4,29 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-/** 새 메모 생성. folderId 없으면 최상위 레벨 */
-export async function createNote(folderId?: string) {
+async function checkPlan() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth')
+
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('plan_type')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile || (profile.plan_type !== 'pro' && profile.plan_type !== 'team')) {
+    return { error: '노트 기능을 이용하려면 프로 플랜 구독이 필요합니다.', redirectToPayment: true }
+  }
+
+  return { user, supabase }
+}
+
+/** 새 메모 생성. folderId 없으면 최상위 레벨 */
+export async function createNote(folderId?: string) {
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { data, error } = await supabase
     .from('notes')
@@ -33,9 +51,9 @@ export async function createNote(folderId?: string) {
 
 /** 메모를 휴지통으로 이동 (soft delete) */
 export async function deleteNote(noteId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { error } = await supabase
     .from('notes')
@@ -55,9 +73,9 @@ export async function deleteNote(noteId: string) {
 
 /** 새 폴더 생성 */
 export async function createFolder(name: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { data, error } = await supabase
     .from('folders')
@@ -79,9 +97,9 @@ export async function createFolder(name: string) {
 
 /** 이메일로 메모 공유 */
 export async function shareNote(noteId: string, email: string, role: 'viewer' | 'editor') {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   // 1. 소유권 확인
   const { data: note } = await supabase
@@ -123,9 +141,9 @@ export async function shareNote(noteId: string, email: string, role: 'viewer' | 
 
 /** 공유 해제 */
 export async function unshareNote(noteId: string, collaboratorUserId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { error } = await supabase
     .from('collaborators')
@@ -144,9 +162,9 @@ export async function unshareNote(noteId: string, collaboratorUserId: string) {
 
 /** 휴지통에서 메모 복구 */
 export async function restoreNote(noteId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { error } = await supabase
     .from('notes')
@@ -166,9 +184,9 @@ export async function restoreNote(noteId: string) {
 
 /** 메모 영구 삭제 */
 export async function permanentlyDeleteNote(noteId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
+  const planCheck = await checkPlan()
+  if ('error' in planCheck) return planCheck
+  const { user, supabase } = planCheck
 
   const { error } = await supabase
     .from('notes')

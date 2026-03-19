@@ -1,26 +1,106 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import AlertModal from '@/components/AlertModal'
+import { confirmPayment } from '../actions'
 
 export default function PaymentCompletedPage() {
-  // Mock data for display
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+  const confirmedRef = useRef(false)
+
+  const paymentKey = searchParams.get('paymentKey')
+  const orderId = searchParams.get('orderId')
+  const amount = searchParams.get('amount')
+
+  useEffect(() => {
+    if (confirmedRef.current) return
+    
+    async function confirm() {
+      if (!paymentKey || !orderId || !amount) {
+        setIsAlertOpen(true)
+        return
+      }
+
+      confirmedRef.current = true
+      const result = await confirmPayment(paymentKey, orderId, amount)
+      
+      if (result.success) {
+        setStatus('success')
+      } else {
+        setErrorMessage(result.error || '결제 승인에 실패했습니다.')
+        setIsAlertOpen(true)
+      }
+    }
+
+    confirm()
+  }, [paymentKey, orderId, amount])
+
+  if (isAlertOpen) {
+    return (
+      <div className="bg-background-light dark:bg-background-dark min-h-screen">
+        <AlertModal 
+          isOpen={isAlertOpen}
+          title="잘못된 접근입니다"
+          message="필수 결제 정보가 누락되었습니다. 결제 페이지로 이동합니다."
+          onConfirm={() => router.push('/payment')}
+        />
+      </div>
+    )
+  }
+
+  if (status === 'loading') {
+    return (
+      <div className="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          <p className="text-slate-500 font-medium">결제 승인 처리 중...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (status === 'error') {
+    return (
+      <div className="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center py-12 px-4">
+        <div className="max-w-[480px] w-full bg-white dark:bg-slate-900 rounded-3xl p-10 shadow-2xl border border-red-100 dark:border-red-900/20 text-center">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-8">
+            <span className="material-symbols-outlined text-5xl">error</span>
+          </div>
+          <h1 className="text-2xl font-black mb-4 tracking-tight">승인에 실패했습니다</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-10 leading-relaxed font-medium">
+            {errorMessage}
+          </p>
+          <Link href="/payment" className="inline-block w-full">
+            <button className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 px-6 rounded-xl transition-all shadow-lg shadow-primary/25">
+              다시 시도하기
+            </button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const paymentInfo = {
-    planName: 'Premium Plan',
-    billingCycle: '월간 구독 이용 중',
-    amount: '₩9,900 / 월',
-    transactionId: 'TRX-940284',
-    date: '2026.03.13 11:30:05',
-    nextBillingDate: '2026.04.13'
+    planName: 'Cloud Memo Pro',
+    billingCycle: '월간 구독 시작됨',
+    amount: `₩${Number(amount).toLocaleString()}`,
+    transactionId: orderId,
+    date: new Date().toLocaleString('ko-KR'),
+    nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('ko-KR')
   }
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-slate-100 min-h-screen antialiased">
       <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
-        {/* Header */}
-        <Header />
+        <Header variant="payment" />
 
         <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
           <div className="max-w-[520px] w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl shadow-primary/5 p-8 border border-primary/10 transition-all">
@@ -29,7 +109,7 @@ export default function PaymentCompletedPage() {
                 <span className="material-symbols-outlined text-4xl">check_circle</span>
               </div>
               <h1 className="text-slate-900 dark:text-slate-100 text-3xl font-black leading-tight mb-2">결제가 완료되었습니다!</h1>
-              <p className="text-slate-600 dark:text-slate-400 text-base">이제 Cloud Memo의 모든 기능을 즐겨보세요.</p>
+              <p className="text-slate-600 dark:text-slate-400 text-base">이제 프로 계정의 모든 기능을 자유롭게 이용하세요.</p>
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-6 mb-8 border border-primary/10">
@@ -49,11 +129,11 @@ export default function PaymentCompletedPage() {
                   <span className="text-slate-900 dark:text-slate-100 font-bold">{paymentInfo.amount}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 dark:text-slate-400 font-medium">결제 번호</span>
-                  <span className="text-slate-900 dark:text-slate-100 font-bold">{paymentInfo.transactionId}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">관리 번호</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold max-w-[180px] truncate" title={paymentInfo.transactionId || ''}>{paymentInfo.transactionId}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 dark:text-slate-400 font-medium">결제 일시</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">승인 일시</span>
                   <span className="text-slate-900 dark:text-slate-100 font-bold">{paymentInfo.date}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -70,19 +150,9 @@ export default function PaymentCompletedPage() {
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </button>
               </Link>
-              <button className="w-full bg-transparent hover:bg-primary/5 text-slate-500 dark:text-slate-400 font-bold py-3 px-6 rounded-xl transition-all text-sm uppercase tracking-widest">
-                영수증 보기
-              </button>
             </div>
           </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-              결제 관련 문의가 있으신가요? <a className="text-primary hover:underline font-bold" href="#">고객 센터</a>로 연락주세요.
-            </p>
-          </div>
         </main>
-
         <Footer />
       </div>
       <style jsx global>{`
@@ -94,6 +164,12 @@ export default function PaymentCompletedPage() {
           animation: bounce-subtle 2s infinite ease-in-out;
         }
       `}</style>
+      <AlertModal 
+        isOpen={isAlertOpen}
+        title="잘못된 접근입니다"
+        message={errorMessage || "필수 결제 정보가 누락되었거나 유효하지 않습니다. 결제 페이지로 이동합니다."}
+        onConfirm={() => router.push('/payment')}
+      />
     </div>
   )
 }
