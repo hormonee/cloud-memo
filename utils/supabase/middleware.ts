@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isExcludedFromAuthRedirect = pathname === '/' || pathname.startsWith('/auth') || pathname.startsWith('/login') || pathname === '/payment'
+  const isExcludedFromAuthRedirect = pathname === '/' || pathname.startsWith('/auth') || pathname.startsWith('/login') || pathname === '/payment' || pathname.startsWith('/api/cron')
 
   if (!user && !isExcludedFromAuthRedirect) {
     const url = request.nextUrl.clone()

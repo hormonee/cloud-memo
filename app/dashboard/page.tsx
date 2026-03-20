@@ -1,6 +1,7 @@
 import React from 'react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import CancelSubscriptionButton from './CancelSubscriptionButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -39,6 +40,14 @@ export default async function DashboardPage() {
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id)
 
+  // 3.5 Fetch subscription status for cancellation UI
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('id, status, next_billing_date')
+    .eq('user_id', user.id)
+    .in('status', ['active', 'cancelled'])
+    .maybeSingle()
+
   // 4. Fetch recent notes
   const { data: recentNotes } = await supabase
     .from('notes')
@@ -72,11 +81,21 @@ export default async function DashboardPage() {
               <div>
                 <span className="px-3 py-1 bg-primary/10 text-primary text-[12px] font-black rounded-full uppercase tracking-widest border border-primary/20">사용 중인 요금제</span>
                 <h3 className="text-3xl font-black mt-4">{profile?.plan_type === 'pro' ? '프로페셔널 플랜' : profile?.plan_type === 'team' ? '팀 플랜' : '베이직 플랜'}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-medium">기본 제공 서비스 혜택을 이용 중입니다.</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-medium">
+                  {subscription?.status === 'cancelled' && subscription?.next_billing_date
+                    ? <span className="text-amber-600 font-bold tracking-tight bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-md">예정된 해지일: {new Date(subscription.next_billing_date).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric'})}</span> 
+                    : '기본 제공 서비스 혜택을 이용 중입니다.'}
+                </p>
               </div>
-              <div className="mt-10 flex gap-4">
+              <div className="mt-10 flex gap-4 items-center flex-wrap">
                 <button className="px-6 py-3 bg-primary text-white text-sm font-bold rounded-xl shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">결제 관리</button>
                 <button className="px-6 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">내역 보기</button>
+                {subscription?.status === 'active' && profile?.plan_type !== 'basic' && (
+                  <CancelSubscriptionButton 
+                    subscriptionId={subscription.id} 
+                    nextBillingDate={subscription.next_billing_date} 
+                  />
+                )}
               </div>
             </div>
           </div>

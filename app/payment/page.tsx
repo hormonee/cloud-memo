@@ -8,6 +8,7 @@ import AlertModal from '@/components/AlertModal'
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { createPaymentLog, updatePaymentLog } from './actions'
 
 export default function PaymentPage() {
   const router = useRouter()
@@ -90,22 +91,36 @@ export default function PaymentPage() {
   }
 
   const handlePaymentRequest = async () => {
+    let tempOrderId = ""
     try {
       setIsSdkLoading(true)
+      
+      // 결제 시도 기록용 임시 주문번호 생성
+      tempOrderId = "REG_" + Math.random().toString(36).substring(2, 11)
+      await createPaymentLog(tempOrderId, 9900)
+
       const tossPayments = await loadTossPayments(clientKey)
       const payment = tossPayments.payment({ customerKey })
       
       // 위젯 없이 바로 카드 등록창 띄우기 (API 개별 연동)
       await payment.requestBillingAuth({
         method: "CARD", 
-        successUrl: window.location.origin + "/payment/billing-auth",
-        failUrl: window.location.origin + "/payment/fail",
+        successUrl: window.location.origin + `/payment/billing-auth?orderId=${tempOrderId}`,
+        failUrl: window.location.origin + `/payment/fail?orderId=${tempOrderId}`,
         customerEmail: "customer123@gmail.com", // 실제로는 user.email 사용
         customerName: "Cloud Memo User",
       })
     } catch (error: any) {
-      console.error("Billing auth request failed:", error)
+      console.error("Billing auth request failed/cancelled:", error)
       setIsSdkLoading(false)
+      setIsPaymentModalOpen(false) // 사용자가 창을 닫으면 모달도 닫기
+      
+      // 사용자가 창을 닫거나 취소한 경우 처리
+      if (tempOrderId) {
+        // Toss SDK 에러 코드 중 USER_CANCEL, PAY_PROCESS_CANCELED 등을 확인하여 CANCELLED로 업데이트
+        const isCancellation = error.code === 'USER_CANCEL' || error.code === 'PAY_PROCESS_CANCELED'
+        await updatePaymentLog(tempOrderId, isCancellation ? 'CANCELLED' : 'FAILED', error.message || '사용자 취소 또는 오류')
+      }
     }
   }
 

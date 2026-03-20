@@ -22,6 +22,11 @@ CREATE POLICY "Users can insert own payment logs"
     ON public.payment_logs FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Service role can update all payment logs"
+CREATE POLICY "Users can update own payment logs"
     ON public.payment_logs FOR UPDATE
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Service role can all payment logs"
+    ON public.payment_logs FOR ALL
     USING (true);

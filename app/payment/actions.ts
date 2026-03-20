@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server'
+import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 const SECRET_KEY = process.env.TOSS_SECRET_KEY || ""
@@ -8,65 +8,49 @@ const SECRET_KEY = process.env.TOSS_SECRET_KEY || ""
 export async function createPaymentLog(orderId: string, amount: number) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: '인증이 필요합니다.' }
 
-  const { error } = await supabase
-    .from('payment_logs')
-    .insert({
-      user_id: user.id,
-      order_id: orderId,
-      amount,
-      status: 'PENDING'
-    })
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  const { error } = await supabase.from('payment_logs').insert({
+    user_id: user.id,
+    order_id: orderId,
+    amount: amount,
+    status: 'PENDING'
+  })
 
   if (error) {
-    console.error('createPaymentLog error:', error)
-    return { error: error.message }
+    console.error('Payment log creation error:', error)
+    return { error: '결제 로그 생성 실패' }
   }
+
   return { success: true }
 }
 
-export async function updatePaymentLog(orderId: string, status: 'CANCELLED' | 'FAILED' | 'SUCCESS', failReason?: string, paymentKey?: string) {
+export async function updatePaymentLog(orderId: string, status: string, failReason?: string, paymentKey?: string) {
   const supabase = await createClient()
+
+  const updateData: any = {
+    status,
+    updated_at: new Date().toISOString()
+  }
+  if (failReason) updateData.fail_reason = failReason
+  if (paymentKey) updateData.payment_key = paymentKey
+
   const { error } = await supabase
     .from('payment_logs')
-    .update({
-      status,
-      fail_reason: failReason,
-      payment_key: paymentKey,
-      updated_at: new Date().toISOString()
-    })
+    .update(updateData)
     .eq('order_id', orderId)
 
   if (error) {
-    console.error('updatePaymentLog error:', error)
-    return { error: error.message }
+    console.error('Payment log update error:', error)
+    return { error: '결제가 성공했으나 로그 업데이트에 실패했습니다.' }
   }
+
   return { success: true }
 }
 
-export async function confirmPayment(paymentKey: string, orderId: string, amount: string) {
+export async function confirmPayment(paymentKey: string, orderId: string, amount: number) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: '인증되지 않은 사용자입니다.' }
-  }
-
-  if (!paymentKey || !orderId || !amount) {
-    return { error: '필수 결제 정보가 누락되었습니다.' }
-  }
-
-  // 1. 이미 성공한 결제인지 확인 (중복 승인 및 상태 변경 방지)
-  const { data: existingLog } = await supabase
-    .from('payment_logs')
-    .select('status')
-    .eq('order_id', orderId)
-    .single()
-
-  if (existingLog?.status === 'SUCCESS') {
-    return { error: '이미 처리된 결제입니다.' }
-  }
 
   try {
     const response = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
@@ -85,42 +69,55 @@ export async function confirmPayment(paymentKey: string, orderId: string, amount
     const data = await response.json()
 
     if (!response.ok) {
-      console.error('TossPayments confirm error:', data)
-      await updatePaymentLog(orderId, 'FAILED', data.message || '결제 승인 중 오류')
-      return { error: data.message || '결제 승인 중 오류가 발생했습니다.' }
+      await updatePaymentLog(orderId, 'FAILED', data.message || '결제 승인 실패')
+      return { error: data.message || '결제 승인 실패' }
     }
 
-    // 결제 성공 시 유저 플랜 업데이트 및 로그 업데이트
+    // 결제 로그 업데이트 (SUCCESS)
     await updatePaymentLog(orderId, 'SUCCESS', undefined, paymentKey)
-    const { error: updateError } = await supabase
-      .from('user_profiles')
-      .update({ plan_type: 'pro', updated_at: new Date().toISOString() })
-      .eq('id', user.id)
 
-    if (updateError) {
-      console.error('Update profile error:', updateError)
-      return { error: '프로필 업데이트 중 오류가 발생했습니다.' }
+    // 사용자 플랜 업데이트 (Pro)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase
+        .from('user_profiles')
+        .update({ plan_type: 'pro', updated_at: new Date().toISOString() })
+        .eq('id', user.id)
     }
 
     revalidatePath('/', 'layout')
     revalidatePath('/dashboard', 'page')
-    revalidatePath('/payment', 'page')
-    
+
     return { success: true, data }
   } catch (error) {
-    console.error('Confirm payment exception:', error)
-    return { error: '서버 통신 중 오류가 발생했습니다.' }
+    console.error('Payment confirmation error:', error)
+    return { error: '결제 처리 중 서버 오류가 발생했습니다.' }
   }
 }
 
-export async function issueAndExecuteBilling(authKey: string, customerKey: string) {
+// KST(UTC+9) 기준 날짜 계산 헬퍼
+function getKSTDate(date: Date = new Date()) {
+  const utc = date.getTime() + (date.getTimezoneOffset() * 60000)
+  const KST_OFFSET = 9 * 60 * 60000
+  return new Date(utc + KST_OFFSET)
+}
+
+// 다음 결제일 계산 (현재 KST 기준 1달 뒤의 00:00:00)
+function getNextBillingDateKST() {
+  const nowKST = getKSTDate()
+  const nextMonth = new Date(nowKST)
+  nextMonth.setMonth(nextMonth.getMonth() + 1)
+  nextMonth.setHours(0, 0, 0, 0)
+  return nextMonth.toISOString()
+}
+
+export async function issueAndExecuteBilling(customerKey: string, authKey: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) return { error: '인증이 필요합니다.' }
+  if (!user) return { error: '로그인이 필요합니다.' }
 
   try {
-    // 1. 빌링키 발급 API 호출
+    // 1. 빌링키 발급 요청
     const authResponse = await fetch('https://api.tosspayments.com/v1/billing/authorizations/issue', {
       method: 'POST',
       headers: {
@@ -128,22 +125,21 @@ export async function issueAndExecuteBilling(authKey: string, customerKey: strin
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        authKey,
         customerKey,
+        authKey,
       }),
     })
 
     const authData = await authResponse.json()
     if (!authResponse.ok) {
-      console.error('Billing issue error:', authData)
+      console.error('Billing key issue error:', authData)
       return { error: authData.message || '빌링키 발급 실패' }
     }
 
     const { billingKey } = authData
 
-    // 2.subscriptions 테이블 저장 (결제일 고정 방식: 현재일 기준 1달 뒤)
-    const nextBillingDate = new Date()
-    nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
+    // 2.subscriptions 테이블 저장 (KST 결제일 고정 방식)
+    const nextBillingDate = getNextBillingDateKST()
 
     const { error: subError } = await supabase
       .from('subscriptions')
@@ -152,7 +148,7 @@ export async function issueAndExecuteBilling(authKey: string, customerKey: strin
         customer_key: customerKey,
         billing_key: billingKey,
         status: 'active',
-        next_billing_date: nextBillingDate.toISOString(),
+        next_billing_date: nextBillingDate,
       })
 
     if (subError) {
@@ -162,6 +158,14 @@ export async function issueAndExecuteBilling(authKey: string, customerKey: strin
 
     // 3. 최초 결제 즉시 승인 요청 (9,900원)
     const orderId = "BILL_" + Math.random().toString(36).substring(2, 11)
+
+    await supabase.from('payment_logs').insert({
+      user_id: user.id,
+      order_id: orderId,
+      amount: 9900,
+      status: 'PENDING'
+    })
+
     const payResponse = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
       method: 'POST',
       headers: {
@@ -173,6 +177,7 @@ export async function issueAndExecuteBilling(authKey: string, customerKey: strin
         orderId,
         orderName: 'Cloud Memo Pro 정기 구독',
         amount: 9900,
+        taxFreeAmount: 0,
         customerEmail: user.email,
       }),
     })
@@ -180,30 +185,199 @@ export async function issueAndExecuteBilling(authKey: string, customerKey: strin
     const payData = await payResponse.json()
     if (!payResponse.ok) {
       console.error('Initial billing payment error:', payData)
-      // 빌링키 발급은 성공했으나 첫 결제 실패 시 상황 (필요 시 후속 처리)
+      await updatePaymentLog(orderId, 'FAILED', payData.message || '최초 결제 승인 실패')
       return { error: payData.message || '최초 결제 승인 실패' }
     }
 
-    // 4. 권한 및 로그 업데이트
-    await supabase.from('payment_logs').insert({
-      user_id: user.id,
-      order_id: orderId,
-      amount: 9900,
-      status: 'SUCCESS',
-      payment_key: payData.paymentKey
-    })
+    await updatePaymentLog(orderId, 'SUCCESS', undefined, payData.paymentKey)
 
     await supabase
       .from('user_profiles')
-      .update({ plan_type: 'pro' })
+      .update({ plan_type: 'pro', updated_at: new Date().toISOString() })
       .eq('id', user.id)
 
     revalidatePath('/', 'layout')
     revalidatePath('/dashboard', 'page')
-    
+
     return { success: true, data: payData }
   } catch (error) {
     console.error('issueAndExecuteBilling exception:', error)
     return { error: '정기 결제 처리 중 서버 오류가 발생했습니다.' }
   }
+}
+
+export async function executeBilling(customerKey: string, billingKey: string, userId: string, email?: string) {
+  const supabase = await createAdminClient()
+  const orderId = "BILL_" + Math.random().toString(36).substring(2, 11)
+
+  await supabase.from('payment_logs').insert({
+    user_id: userId,
+    order_id: orderId,
+    amount: 9900,
+    status: 'PENDING'
+  })
+
+  try {
+    const response = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${Buffer.from(`${SECRET_KEY}:`).toString('base64')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        customerKey,
+        orderId,
+        orderName: 'Cloud Memo Pro 정기 구독',
+        amount: 9900,
+        taxFreeAmount: 0,
+        customerEmail: email,
+      }),
+    })
+
+    const data = await response.json()
+    if (!response.ok) {
+      console.error(`Billing execution failed for ${userId}:`, data)
+      await updatePaymentLog(orderId, 'FAILED', data.message || '정기 결제 승인 실패')
+      return { success: false, error: data.message }
+    }
+
+    await updatePaymentLog(orderId, 'SUCCESS', undefined, data.paymentKey)
+
+    const nextBillingDate = getNextBillingDateKST()
+
+    await supabase
+      .from('subscriptions')
+      .update({
+        next_billing_date: nextBillingDate,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+
+    return { success: true, data }
+  } catch (error: any) {
+    console.error(`Billing execution error for ${userId}:`, error)
+    await updatePaymentLog(orderId, 'FAILED', error.message || '서버 오류')
+    return { success: false, error: error.message }
+  }
+}
+
+export async function processDailySubscriptions() {
+  const supabase = await createAdminClient()
+
+  const nowKST = getKSTDate()
+  const todayKST = new Date(nowKST)
+  todayKST.setHours(23, 59, 59, 999)
+  const todayISO = todayKST.toISOString()
+
+  const { data: dueSubscriptions, error } = await supabase
+    .from('subscriptions')
+    .select('*, user_profiles(email)')
+    .eq('status', 'active')
+    .lte('next_billing_date', todayISO)
+
+  if (error) {
+    console.error('Error fetching due subscriptions:', error)
+    return { processed: 0, successCount: 0, failedCount: 0, error: error.message }
+  }
+
+  const results = {
+    processed: dueSubscriptions?.length || 0,
+    successCount: 0,
+    failedCount: 0
+  }
+
+  if (!dueSubscriptions || dueSubscriptions.length === 0) {
+    return results
+  }
+
+  for (const sub of dueSubscriptions) {
+    const res = await executeBilling(
+      sub.customer_key,
+      sub.billing_key,
+      sub.user_id,
+      (sub.user_profiles as any)?.email
+    )
+    if (res.success) {
+      results.successCount++
+    } else {
+      results.failedCount++
+    }
+  }
+
+  return results
+}
+
+export async function cancelSubscription(subscriptionId?: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  let query = supabase.from('subscriptions').update({ status: 'cancelled', updated_at: new Date().toISOString() })
+  
+  if (subscriptionId) {
+    query = query.eq('id', subscriptionId).eq('user_id', user.id)
+  } else {
+    query = query.eq('user_id', user.id)
+  }
+
+  const { error } = await query
+
+  if (error) {
+    console.error('Cancel subscription error:', error)
+    return { error: '구독 취소 처리에 실패했습니다.' }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function processDailyDowngrades() {
+  const supabase = await createAdminClient()
+  
+  const nowKST = getKSTDate()
+  const todayKST = new Date(nowKST)
+  todayKST.setHours(23, 59, 59, 999) 
+  const todayISO = todayKST.toISOString()
+
+  // 취소된 구독 중 기간이 만료된 항목 조회
+  const { data: expiredSubscriptions, error } = await supabase
+    .from('subscriptions')
+    .select('user_id, id')
+    .eq('status', 'cancelled')
+    .lte('next_billing_date', todayISO)
+
+  if (error) {
+    console.error('Error fetching expired subscriptions:', error)
+    return { processed: 0, error: error.message }
+  }
+
+  if (!expiredSubscriptions || expiredSubscriptions.length === 0) {
+    return { processed: 0 }
+  }
+
+  let successCount = 0
+
+  for (const sub of expiredSubscriptions) {
+    // 1. 프로필 다운그레이드
+    const { error: profileError } = await supabase
+      .from('user_profiles')
+      .update({ plan_type: 'basic', updated_at: new Date().toISOString() })
+      .eq('id', sub.user_id)
+      
+    if (profileError) {
+      console.error(`Downgrade error for User ${sub.user_id}:`, profileError)
+      continue
+    }
+
+    // 2. 만료 처리된 구독은 'past_due' (또는 삭제/만료 상태)로 변경하여 중복 처리 방지
+    await supabase
+      .from('subscriptions')
+      .update({ status: 'past_due', updated_at: new Date().toISOString() })
+      .eq('id', sub.id)
+      
+    successCount++
+  }
+
+  return { processed: expiredSubscriptions.length, successCount }
 }
