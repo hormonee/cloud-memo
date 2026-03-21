@@ -19,7 +19,7 @@ function PaymentCompletedContent() {
   const paymentKey = searchParams.get('paymentKey')
   const orderId = searchParams.get('orderId')
   const amount = searchParams.get('amount') || '9900'
-  
+
   // Billing Auth 핸들러에서 넘어올 때 isBilling=true를 붙여서 넘기도록 되어 있음
   // 이제 파라미터가 아예 없는 경우(직접 접근)는 성공으로 간주하지 않습니다.
   const isBillingSuccess = searchParams.get('isBilling') === 'true'
@@ -32,7 +32,7 @@ function PaymentCompletedContent() {
     }
 
     if (confirmedRef.current) return
-    
+
     async function confirm() {
       // 빌링 결제 완료로 넘어온 경우 (서버 액션 issueAndExecuteBilling이 이미 처리함)
       if (isBillingSuccess) {
@@ -41,8 +41,8 @@ function PaymentCompletedContent() {
       }
 
       confirmedRef.current = true
-      const result = await confirmPayment(paymentKey!, orderId!, amount)
-      
+      const result = await confirmPayment(paymentKey!, orderId!, Number(amount))
+
       if (result.success) {
         setStatus('success')
       } else {
@@ -57,7 +57,7 @@ function PaymentCompletedContent() {
   if (isAlertOpen) {
     return (
       <div className="bg-background-light dark:bg-background-dark min-h-screen">
-        <AlertModal 
+        <AlertModal
           isOpen={isAlertOpen}
           title="잘못된 접근입니다"
           message={errorMessage || "필수 결제 정보가 누락되었습니다. 결제 페이지로 이동합니다."}
