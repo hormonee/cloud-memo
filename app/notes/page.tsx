@@ -1,5 +1,15 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Cloud Memo - 나의 메모",
+  description: "실시간 동기화되는 나만의 스마트 메모 라이브러리. 모든 아이디어를 체계적으로 관리하세요.",
+  openGraph: {
+    title: "Cloud Memo - 나의 메모",
+    description: "실시간 동기화되는 나만의 스마트 메모 라이브러리. 모든 아이디어를 체계적으로 관리하세요.",
+  }
+}
 
 interface PageProps {
   searchParams: Promise<{ folder?: string; filter?: string }>

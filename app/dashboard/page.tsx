@@ -1,7 +1,16 @@
-import React from 'react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
 import CancelSubscriptionButton from './CancelSubscriptionButton'
+
+export const metadata: Metadata = {
+  title: "Cloud Memo - 대시보드",
+  description: "나의 생산성 요약과 최근 메모 활동을 한눈에 확인하세요. 효율적인 메모 관리를 시작해보세요.",
+  openGraph: {
+    title: "Cloud Memo - 대시보드",
+    description: "나의 생산성 요약과 최근 메모 활동을 한눈에 확인하세요. 효율적인 메모 관리를 시작해보세요.",
+  }
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()

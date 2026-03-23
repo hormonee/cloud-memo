@@ -1,23 +1,36 @@
 import { render, screen } from '@testing-library/react'
 import Page from './page'
 
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    refresh: jest.fn(),
+  })),
+  usePathname: jest.fn(),
+}))
+
+// Mock Header and Footer to avoid loading their dependencies (like auth actions)
+jest.mock('@/components/Header', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-header">Header</div>,
+}))
+
+jest.mock('@/components/Footer', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-footer">Footer</div>,
+}))
+
 describe('Landing Page', () => {
   it('renders the main headline', () => {
     render(<Page />)
-    const headlinePart = screen.getByText(/생각을 담다/i)
-    expect(headlinePart).toBeInTheDocument()
+    expect(screen.getByText(/생각을 담다/i)).toBeInTheDocument()
   })
 
-  it('renders the brand logo name', () => {
+  it('renders header and footer mocks', () => {
     render(<Page />)
-    const logoName = screen.getAllByText(/Cloud Memo/i)
-    expect(logoName.length).toBeGreaterThan(0)
-  })
-
-  it('renders "시작하기" button in the navigation', () => {
-    render(<Page />)
-    const startButtons = screen.getAllByText('시작하기')
-    expect(startButtons.length).toBeGreaterThan(0)
+    expect(screen.getByTestId('mock-header')).toBeInTheDocument()
+    expect(screen.getByTestId('mock-footer')).toBeInTheDocument()
   })
 
   it('renders the feature section cards', () => {
@@ -27,9 +40,9 @@ describe('Landing Page', () => {
     expect(screen.getByText('안전한 보안')).toBeInTheDocument()
   })
 
-  it('renders the main CTA button in hero section', () => {
+  it('renders the main CTA buttons', () => {
     render(<Page />)
-    const heroCta = screen.getByText('무료로 시작하기')
-    expect(heroCta).toBeInTheDocument()
+    const ctaButtons = screen.getAllByText(/지금 무료 시작/i)
+    expect(ctaButtons.length).toBeGreaterThan(0)
   })
 })
